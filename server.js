@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var Comment = require('./model/comments');
 var User = require('./model/users');
+var Group = require('./model/groups');
 
 //and create our instances
 var app = express();
@@ -120,6 +121,88 @@ router.route('/users')
         res.json({ message: 'User successfully added!' });
     });
 });
+
+router.route('/users/:user_id')
+//The put method gives us the chance to update our comment based on
+//the ID passed to the route
+ .put(function(req, res) {
+      User.findById(req.params.user_id, function(err, user) {
+          if (err)
+            res.send(err);
+          //setting the new author and text to whatever was changed. If
+          //nothing was changed we will not alter the field.
+          (req.body.name) ? user.name = req.body.name : null;
+          (req.body.password) ? user.password = req.body.password : null;
+          //save comment
+          user.save(function(err) {
+              if (err)
+                  res.send(err);
+                  res.json({ message: 'User has been updated' });
+          });
+      });
+ })
+ //delete method for removing a comment from our database
+ .delete(function(req, res) {
+ //selects the comment by its ID, then removes it.
+      User.remove({ _id: req.params.user_id }, function(err, user) {
+          if (err)
+              res.send(err);
+          res.json({ message: 'User has been deleted' })
+      })
+ });
+
+ router.route('/groups')
+
+  .get(function(req, res) {
+
+    Group.find(function(err, groups) {
+      if (err)
+        res.send(err)
+      res.json(groups)
+    });
+  })
+
+  .post(function(req, res) {
+    var group = new Group();
+
+    group.name = req.body.name;
+    group.description = req.body.description;
+    group.img = req.body.img
+
+    group.save(function(err) {
+      if (err)
+        res.send(err)
+      res.json({ message: 'Group successfully added!' });
+    });
+  });
+
+router.route('/groups/:group_id')
+
+  .put(function(req, res) {
+    Group.findById(req.params.group_id, function(err, group) {
+        if (err)
+          res.send(err);
+        //setting the new author and text to whatever was changed. If
+        //nothing was changed we will not alter the field.
+        (req.body.name) ? group.name = group.body.name : null;
+        (req.body.description) ? group.description = req.body.description : null;
+        (req.body.img) ? group.img = req.body.img : null;
+        //save comment
+        group.save(function(err) {
+            if (err)
+                res.send(err);
+                res.json({ message: 'Group has been updated' });
+        });
+     });
+  })
+  .delete(function(req, res) {
+  //selects the comment by its ID, then removes it.
+       Group.remove({ _id: req.params.group_id }, function(err, group) {
+           if (err)
+               res.send(err);
+           res.json({ message: 'Group has been deleted' })
+       })
+  });
 
 //Use our router configuration when we call /api
 app.use('/api', router);

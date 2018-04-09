@@ -6,7 +6,7 @@ import Contact from './components/views/contact';
 
 export default (
   <Route path='/' component={App}>
-    <Route exact path = "/" component={Home} />
+    <Route exact path='/' component={Home} />
     <Route path='comment' component={Comment} />
     <Route path='*' component={Home} />
   </Route>

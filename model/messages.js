@@ -5,8 +5,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var messageSchema = new Schema({
-	_id: int,
-	recipient_group: [{ group_id: int, event_id: int}],
+	recipient_group: [{ group_id: Schema.Types.ObjectId, event_id: Schema.Types.ObjectId}],
 	messages: [{ message: String }]
 });
 
